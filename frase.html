@@ -160,9 +160,31 @@ function renderFrase() {
   montada = [];
   restantes = shuffle(frase.en);
 
-  document.getElementById('sentenceTarget').innerHTML = '';
   document.getElementById('btnEnviar').style.display = 'none';
+  renderTarget();
   renderBank();
+}
+
+// Clicar em uma palavra devolve ela pro banco
+function renderTarget() {
+  const target = document.getElementById('sentenceTarget');
+  target.innerHTML = '';
+  montada.forEach((palavra, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'word-chip placed';
+    btn.textContent = palavra;
+    btn.onclick = () => removerPalavra(i);
+    target.appendChild(btn);
+  });
+}
+
+function removerPalavra(indice) {
+  const palavra = montada[indice];
+  montada.splice(indice, 1);
+  restantes.push(palavra);
+  renderTarget();
+  renderBank();
+  document.getElementById('btnEnviar').style.display = 'none';
 }
 
 function renderBank() {
@@ -182,15 +204,10 @@ function escolherPalavra(indice) {
   montada.push(palavra);
   restantes.splice(indice, 1);
 
-  const target = document.getElementById('sentenceTarget');
-  const chip = document.createElement('span');
-  chip.className = 'word-chip placed';
-  chip.textContent = palavra;
-  target.appendChild(chip);
-
+  renderTarget();
   renderBank();
 
-  // só mostra o botão Enviar quando a frase estiver completa
+  // Só mostra o botão Enviar quando a frase estiver completa
   if (restantes.length === 0) {
     document.getElementById('btnEnviar').style.display = 'inline-flex';
   }

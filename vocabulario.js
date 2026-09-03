@@ -1,5 +1,5 @@
 export const VOCABULARIO = [
-  //Saudações básicas
+    //Saudações básicas
   { cat: "saudações", en: "Hello", pt: "Olá" },
   { cat: "saudações", en: "Good morning", pt: "Bom dia" },
   { cat: "saudações", en: "Good night", pt: "Boa noite" },
@@ -9,6 +9,9 @@ export const VOCABULARIO = [
   { cat: "saudações", en: "How are you", pt: "Como você está" },
   { cat: "saudações", en: "Nice to meet you", pt: "Prazer em conhecer" },
   { cat: "saudações", en: "See you later", pt: "Até mais" },
+  { cat: "saudações", en: "Excuse me", pt: "Com licença" },
+  { cat: "saudações", en: "Sorry", pt: "Desculpa" },
+  { cat: "saudações", en: "Welcome", pt: "Bem-vindo" },
 
   //Números iniciais
   { cat: "números", en: "One", pt: "Um" },
@@ -21,6 +24,10 @@ export const VOCABULARIO = [
   { cat: "números", en: "Eight", pt: "Oito" },
   { cat: "números", en: "Nine", pt: "Nove" },
   { cat: "números", en: "Ten", pt: "Dez" },
+  { cat: "números", en: "Eleven", pt: "Onze" },
+  { cat: "números", en: "Twelve", pt: "Doze" },
+  { cat: "números", en: "Twenty", pt: "Vinte" },
+  { cat: "números", en: "Hundred", pt: "Cem" },
 
   //Cores
   { cat: "cores", en: "Red", pt: "Vermelho" },
@@ -33,6 +40,9 @@ export const VOCABULARIO = [
   { cat: "cores", en: "Orange", pt: "Laranja" },
   { cat: "cores", en: "Purple", pt: "Roxo" },
   { cat: "cores", en: "Brown", pt: "Marrom" },
+  { cat: "cores", en: "Gray", pt: "Cinza" },
+  { cat: "cores", en: "Silver", pt: "Prata" },
+  { cat: "cores", en: "Gold", pt: "Dourado" },
 
   //Animais
   { cat: "animais", en: "Dog", pt: "Cachorro" },
@@ -45,6 +55,10 @@ export const VOCABULARIO = [
   { cat: "animais", en: "Shark", pt: "Tubarão" },
   { cat: "animais", en: "Rabbit", pt: "Coelho" },
   { cat: "animais", en: "Elephant", pt: "Elefante" },
+  { cat: "animais", en: "Monkey", pt: "Macaco" },
+  { cat: "animais", en: "Turtle", pt: "Tartaruga" },
+  { cat: "animais", en: "Snake", pt: "Cobra" },
+  { cat: "animais", en: "Owl", pt: "Coruja" },
 
   //Comidas
   { cat: "comidas", en: "Apple", pt: "Maçã" },
@@ -57,6 +71,10 @@ export const VOCABULARIO = [
   { cat: "comidas", en: "Coffee", pt: "Café" },
   { cat: "comidas", en: "Egg", pt: "Ovo" },
   { cat: "comidas", en: "Banana", pt: "Banana" },
+  { cat: "comidas", en: "Juice", pt: "Suco" },
+  { cat: "comidas", en: "Salad", pt: "Salada" },
+  { cat: "comidas", en: "Soup", pt: "Sopa" },
+  { cat: "comidas", en: "Fruit", pt: "Fruta" },
 
   //Dias da semana
   { cat: "dias e meses", en: "Monday", pt: "Segunda-feira" },
@@ -66,6 +84,9 @@ export const VOCABULARIO = [
   { cat: "dias e meses", en: "Friday", pt: "Sexta-feira" },
   { cat: "dias e meses", en: "Saturday", pt: "Sábado" },
   { cat: "dias e meses", en: "Sunday", pt: "Domingo" },
+  { cat: "dias e meses", en: "Today", pt: "Hoje" },
+  { cat: "dias e meses", en: "Tomorrow", pt: "Amanhã" },
+  { cat: "dias e meses", en: "Yesterday", pt: "Ontem" },
 
   //Meses
   { cat: "dias e meses", en: "January", pt: "Janeiro" },
@@ -80,4 +101,28 @@ export const VOCABULARIO = [
   { cat: "dias e meses", en: "October", pt: "Outubro" },
   { cat: "dias e meses", en: "November", pt: "Novembro" },
   { cat: "dias e meses", en: "December", pt: "Dezembro" },
+
+  //Objetos
+  { cat: "objetos", en: "Table", pt: "Mesa" },
+  { cat: "objetos", en: "Chair", pt: "Cadeira" },
+  { cat: "objetos", en: "Book", pt: "Livro" },
+  { cat: "objetos", en: "Pen", pt: "Caneta" },
+  { cat: "objetos", en: "Phone", pt: "Telefone" },
+  { cat: "objetos", en: "Computer", pt: "Computador" },
+  { cat: "objetos", en: "Window", pt: "Janela" },
+  { cat: "objetos", en: "Door", pt: "Porta" },
+  { cat: "objetos", en: "Key", pt: "Chave" },
+  { cat: "objetos", en: "Clock", pt: "Relógio" },
+
+  //Família
+  { cat: "família", en: "Mother", pt: "Mãe" },
+  { cat: "família", en: "Father", pt: "Pai" },
+  { cat: "família", en: "Sister", pt: "Irmã" },
+  { cat: "família", en: "Brother", pt: "Irmão" },
+  { cat: "família", en: "Grandmother", pt: "Avó" },
+  { cat: "família", en: "Grandfather", pt: "Avô" },
+  { cat: "família", en: "Son", pt: "Filho" },
+  { cat: "família", en: "Daughter", pt: "Filha" },
+  { cat: "família", en: "Aunt", pt: "Tia" },
+  { cat: "família", en: "Uncle", pt: "Tio" },
 ];

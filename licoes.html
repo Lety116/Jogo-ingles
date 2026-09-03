@@ -31,7 +31,7 @@
   </div>
 
   <!-- Aparece só se a pessoa estiver logada -->
-  <section class="wrap" id="licoesArea" style="display:none; padding-top:36px;">
+  <section class="wrap" id="licoesArea" style="display:none">
     <h2>Lições de vocabulário</h2>
     <div id="topicList"></div>
   </section>
@@ -59,7 +59,6 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-// Explicação de cada tópico
 const TOPICOS = {
   "saudações": { emoji: "👋", en: "Greetings", cor: "#B9714C", explicacao: "Aprenda a cumprimentar, agradecer e se despedir em inglês." },
   "números":   { emoji: "🔢", en: "Numbers", cor: "#355E63", explicacao: "Aprenda a contar em inglês, do um ao dez." },
@@ -67,6 +66,8 @@ const TOPICOS = {
   "animais":   { emoji: "🐾", en: "Animals", cor: "#8A6A4F", explicacao: "Vocabulário de animais comuns, do gato ao tubarão." },
   "comidas":   { emoji: "🍎", en: "Food", cor: "#C1502E", explicacao: "Palavras sobre comidas e bebidas do dia a dia." },
   "dias e meses": { emoji: "📅", en: "Days and Months", cor: "#23454A", explicacao: "Aprenda os dias da semana e os meses do ano." },
+  "objetos":   { emoji: "✂️", en: "Objects", cor: "#4F6B79", explicacao: "Nomes de objetos comuns do dia a dia." },
+  "família":   { emoji: "👨‍👩‍👧", en: "Family", cor: "#6B4F6B", explicacao: "Aprenda a nomear os membros da família em inglês." },
 };
 
 // Deixa só a primeira letra maiúscula 
@@ -77,8 +78,6 @@ function capitalizar(texto) {
 // Guarda qual tópico está aberto no momento (null = nenhum)
 let topicoAberto = null;
 
-// Desenha a lista de tópicos; se um estiver aberto, mostra as palavras dele
-function renderTopicos() {
   const topicList = document.getElementById('topicList');
   topicList.innerHTML = '';
 
@@ -87,17 +86,14 @@ function renderTopicos() {
     const estaAberto = topicoAberto === cat;
 
     const card = document.createElement('div');
-    card.style.marginBottom = '14px';
 
     const header = document.createElement('button');
     header.className = 'topic-pill' + (estaAberto ? ' active' : '');
     header.style.background = info.cor;
-    header.style.width = '100%';
-    header.style.display = 'block';
     header.innerHTML = `
       <span class="emoji">${info.emoji}</span>
       <span class="label">${capitalizar(cat)} / ${info.en}</span>
-      <span style="display:block; font-size:0.85rem; opacity:0.9; margin-top:4px; font-weight:400;">${info.explicacao}</span>
+      <span class="explicacao">${info.explicacao}</span>
     `;
     header.onclick = () => {
       topicoAberto = estaAberto ? null : cat;
@@ -105,11 +101,9 @@ function renderTopicos() {
     };
     card.appendChild(header);
 
-    // Se esse tópico está aberto, mostra as palavras dele
     if (estaAberto) {
       const grid = document.createElement('div');
       grid.className = 'stamp-grid';
-      grid.style.marginTop = '12px';
 
       VOCABULARIO.filter(v => v.cat === cat).forEach(item => {
         const div = document.createElement('div');
@@ -127,7 +121,7 @@ function renderTopicos() {
 
     topicList.appendChild(card);
   });
-}
+
 </script>
 
 </body>
