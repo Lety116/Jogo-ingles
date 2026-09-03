@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Aprendendo Devagar</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <a href="index.html" class="brand">Aprendendo Devagar</a>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="licoes.html">Lições</a>
+      <a href="jogo.html">Quiz</a>
+      <a href="frase.html">Frase</a>
+      <span id="userChip">
+        <span id="userName"></span>
+        <button id="btnLogout">Sair</button>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<main class="game-shell">
+
+  <div id="lockedNote" class="locked-note" style="display:none">
+    Você precisa fazer login para jogar. <a href="index.html">Voltar e entrar</a>.
+  </div>
+
+  <div id="gameArea" style="display:none">
+    <div class="pass">
+      <div class="pass-top">
+        <div>
+          <div class="label">jogador</div>
+          <div id="playerName">—</div>
+        </div>
+        <div>
+          <div class="label">pergunta</div>
+          <div id="questionCount">1 / 10</div>
+        </div>
+      </div>
+      <div class="pass-body">
+
+        <!-- Tela inicial -->
+        <div id="startStage" class="start-screen">
+          <h2 class="question">Pronto para testar seu inglês?</h2>
+          <p>10 perguntas de múltipla escolha sobre o que você aprendeu nas lições.</p>
+          <button class="btn btn-green btn-auto" id="btnStart">Começar Quiz!</button>
+        </div>
+
+        <div id="quizWrapper" style="display:none">
+          <div class="bar-track"><div class="bar-fill" id="progressFill"></div></div>
+
+          <div id="quizStage">
+            <p class="question-sub" id="questionSub">Qual é a tradução em português?</p>
+            <h2 class="question" id="questionText">—</h2>
+            <div class="options" id="optionsArea"></div>
+            <button class="btn btn-primary btn-auto" id="btnEnviar" style="margin-top:16px;" disabled>Enviar</button>
+          </div>
+
+          <!-- Tela final: pontuação + revisão de todas as perguntas -->
+          <div id="resultStage" class="result" style="display:none">
+            <p style="font-weight:700">Você concluiu o quiz!</p>
+            <p class="score" id="finalScore">0/10</p>
+            <p class="result-msg" id="resultMsg"></p>
+            <button class="btn btn-primary btn-auto" id="btnRestart">Jogar de novo</button>
+
+            <div id="revisao" style="margin-top:24px;"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="leaderboard">
+      <h3>Placar — melhores pontuações</h3>
+      <div id="leaderboardArea"><p>Carregando...</p></div>
+    </div>
+  </div>
+
+</main>
+
+<script type="module">
+import { auth, onAuthStateChanged, signOut, saveScoreIfBest, getLeaderboard } from "./firebase.js";
+import { VOCABULARIO } from "./vocabulario.js";
+
+document.getElementById('btnLogout').onclick = () => signOut(auth);
+
+let currentUser = null;
+
+onAuthStateChanged(auth, (user) => {
+  const userChip = document.getElementById('userChip');
+  if (user) {
+    currentUser = user;
+    userChip.style.display = 'flex';
+    document.getElementById('userName').textContent = user.displayName || user.email;
+    document.getElementById('lockedNote').style.display = 'none';
+    document.getElementById('gameArea').style.display = 'block';
+    document.getElementById('playerName').textContent = user.displayName || user.email;
+    resetToStart();
+    loadLeaderboard();
+  } else {
+    currentUser = null;
+    userChip.style.display = 'none';
+    document.getElementById('lockedNote').style.display = 'block';
+    document.getElementById('gameArea').style.display = 'none';
+  }
+});
+
+const TOTAL_QUESTIONS = 10;
+let questions = [];
+let currentIndex = 0;
+let score = 0;
+let opcaoEscolhida = null;
+let respondida = false;
+let historico = []; // guarda cada pergunta respondida, pra mostrar no final
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Monta 10 perguntas sorteadas do vocabulário, com 3 opções erradas cada
+function buildQuestions() {
+  const pool = shuffle(VOCABULARIO).slice(0, TOTAL_QUESTIONS);
+  return pool.map(item => {
+    const direction = Math.random() < 0.5 ? 'en-pt' : 'pt-en';
+    const promptText = direction === 'en-pt' ? item.en : item.pt;
+    const correctAnswer = direction === 'en-pt' ? item.pt : item.en;
+    const wrongPool = VOCABULARIO.filter(v => v !== item)
+      .map(v => direction === 'en-pt' ? v.pt : v.en);
+    const wrongs = shuffle(wrongPool).slice(0, 3);
+    const options = shuffle([correctAnswer, ...wrongs]);
+    return {
+      prompt: promptText,
+      sub: direction === 'en-pt' ? 'Qual é a tradução em português?' : 'What is the translation in English?',
+      correctAnswer,
+      options
+    };
+  });
+}
+
+function resetToStart() {
+  document.getElementById('startStage').style.display = 'block';
+  document.getElementById('quizWrapper').style.display = 'none';
+}
+
+document.getElementById('btnStart').onclick = startQuiz;
+document.getElementById('btnRestart').onclick = startQuiz;
+
+function startQuiz() {
+  questions = buildQuestions();
+  currentIndex = 0;
+  score = 0;
+  historico = [];
+  document.getElementById('startStage').style.display = 'none';
+  document.getElementById('quizWrapper').style.display = 'block';
+  document.getElementById('quizStage').style.display = 'block';
+  document.getElementById('resultStage').style.display = 'none';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  opcaoEscolhida = null;
+  respondida = false;
+
+  const q = questions[currentIndex];
+  document.getElementById('questionCount').textContent = `${currentIndex + 1} / ${TOTAL_QUESTIONS}`;
+  document.getElementById('progressFill').style.width = `${(currentIndex / TOTAL_QUESTIONS) * 100}%`;
+  document.getElementById('questionSub').textContent = q.sub;
+  document.getElementById('questionText').textContent = q.prompt;
+
+  const optionsArea = document.getElementById('optionsArea');
+  optionsArea.innerHTML = '';
+  q.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.textContent = opt;
+    btn.onclick = () => selecionarOpcao(btn, opt);
+    optionsArea.appendChild(btn);
+  });
+
+  const btnEnviar = document.getElementById('btnEnviar');
+  btnEnviar.disabled = true;
+  btnEnviar.textContent = 'Enviar';
+}
+
+function selecionarOpcao(botao, opcao) {
+  if (respondida) return;
+  document.querySelectorAll('.option').forEach(b => b.classList.remove('selected'));
+  botao.classList.add('selected');
+  opcaoEscolhida = opcao;
+  document.getElementById('btnEnviar').disabled = false;
+}
+
+document.getElementById('btnEnviar').onclick = () => {
+  if (respondida) {
+    currentIndex++;
+    if (currentIndex < TOTAL_QUESTIONS) {
+      renderQuestion();
+    } else {
+      finishQuiz();
+    }
+    return;
+  }
+
+  respondida = true;
+  const q = questions[currentIndex];
+  const buttons = document.querySelectorAll('.option');
+  buttons.forEach(b => {
+    b.disabled = true;
+    if (b.textContent === q.correctAnswer) b.classList.add('correct');
+    else if (b.textContent === opcaoEscolhida) b.classList.add('wrong');
+  });
+
+  const acertou = opcaoEscolhida === q.correctAnswer;
+  if (acertou) score++;
+
+  historico.push({
+    pergunta: q.prompt,
+    respostaCerta: q.correctAnswer,
+    respostaDada: opcaoEscolhida,
+    acertou
+  });
+
+  const btnEnviar = document.getElementById('btnEnviar');
+  const ultima = currentIndex === TOTAL_QUESTIONS - 1;
+  btnEnviar.textContent = ultima ? 'Ver resultado' : 'Próxima pergunta';
+};
+
+async function finishQuiz() {
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('quizStage').style.display = 'none';
+  document.getElementById('resultStage').style.display = 'block';
+  document.getElementById('finalScore').textContent = `${score}/${TOTAL_QUESTIONS}`;
+
+  renderRevisao();
+
+  if (currentUser) {
+    try {
+      const name = currentUser.displayName || currentUser.email;
+      await saveScoreIfBest(currentUser.uid, name, score, TOTAL_QUESTIONS);
+      document.getElementById('resultMsg').textContent = 'Sua pontuação foi salva.';
+      loadLeaderboard();
+    } catch (e) {
+      document.getElementById('resultMsg').textContent = 'Não foi possível salvar a pontuação agora.';
+    }
+  }
+}
+
+// Mostra a lista de todas as perguntas respondidas, certas e erradas
+function renderRevisao() {
+  const area = document.getElementById('revisao');
+  area.innerHTML = '<h3>Revisão das respostas</h3>';
+
+  historico.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'revisao-item ' + (item.acertou ? 'acertou' : 'errou');
+    div.innerHTML = `
+      <p class="pergunta">${item.pergunta}</p>
+      <p class="resposta-dada">Sua resposta: ${item.respostaDada}</p>
+      ${item.acertou ? '' : `<p class="resposta-certa">Resposta certa: ${item.respostaCerta}</p>`}
+    `;
+    area.appendChild(div);
+  });
+}
+
+async function loadLeaderboard() {
+  const area = document.getElementById('leaderboardArea');
+  try {
+    const top = await getLeaderboard();
+    if (top.length === 0) {
+      area.innerHTML = '<p>Ninguém pontuou ainda — seja o primeiro!</p>';
+      return;
+    }
+    area.innerHTML = top.map((row, i) => `
+      <div class="lb-row">
+        <span>${i + 1}º ${row.name}</span>
+        <span>${row.score}/${row.total}</span>
+      </div>
+    `).join('');
+  } catch (e) {
+    area.innerHTML = '<p>Não foi possível carregar o placar agora.</p>';
+  }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+export const VOCABULARIO = [
+  //Saudações básicas
+  { cat: "saudações", en: "Hello", pt: "Olá" },
+  { cat: "saudações", en: "Good morning", pt: "Bom dia" },
+  { cat: "saudações", en: "Good night", pt: "Boa noite" },
+  { cat: "saudações", en: "Thank you", pt: "Obrigado" },
+  { cat: "saudações", en: "Please", pt: "Por favor" },
+  { cat: "saudações", en: "Goodbye", pt: "Tchau" },
+  { cat: "saudações", en: "How are you", pt: "Como você está" },
+  { cat: "saudações", en: "Nice to meet you", pt: "Prazer em conhecer" },
+  { cat: "saudações", en: "See you later", pt: "Até mais" },
+
+  //Números iniciais
+  { cat: "números", en: "One", pt: "Um" },
+  { cat: "números", en: "Two", pt: "Dois" },
+  { cat: "números", en: "Three", pt: "Três" },
+  { cat: "números", en: "Four", pt: "Quatro" },
+  { cat: "números", en: "Five", pt: "Cinco" },
+  { cat: "números", en: "Six", pt: "Seis" },
+  { cat: "números", en: "Seven", pt: "Sete" },
+  { cat: "números", en: "Eight", pt: "Oito" },
+  { cat: "números", en: "Nine", pt: "Nove" },
+  { cat: "números", en: "Ten", pt: "Dez" },
+
+  //Cores
+  { cat: "cores", en: "Red", pt: "Vermelho" },
+  { cat: "cores", en: "Blue", pt: "Azul" },
+  { cat: "cores", en: "Yellow", pt: "Amarelo" },
+  { cat: "cores", en: "Green", pt: "Verde" },
+  { cat: "cores", en: "Black", pt: "Preto" },
+  { cat: "cores", en: "White", pt: "Branco" },
+  { cat: "cores", en: "Pink", pt: "Rosa" },
+  { cat: "cores", en: "Orange", pt: "Laranja" },
+  { cat: "cores", en: "Purple", pt: "Roxo" },
+  { cat: "cores", en: "Brown", pt: "Marrom" },
+
+  //Animais
+  { cat: "animais", en: "Dog", pt: "Cachorro" },
+  { cat: "animais", en: "Cat", pt: "Gato" },
+  { cat: "animais", en: "Bird", pt: "Pássaro" },
+  { cat: "animais", en: "Fish", pt: "Peixe" },
+  { cat: "animais", en: "Horse", pt: "Cavalo" },
+  { cat: "animais", en: "Lion", pt: "Leão" },
+  { cat: "animais", en: "Bear", pt: "Urso" },
+  { cat: "animais", en: "Shark", pt: "Tubarão" },
+  { cat: "animais", en: "Rabbit", pt: "Coelho" },
+  { cat: "animais", en: "Elephant", pt: "Elefante" },
+
+  //Comidas
+  { cat: "comidas", en: "Apple", pt: "Maçã" },
+  { cat: "comidas", en: "Bread", pt: "Pão" },
+  { cat: "comidas", en: "Rice", pt: "Arroz" },
+  { cat: "comidas", en: "Milk", pt: "Leite" },
+  { cat: "comidas", en: "Water", pt: "Água" },
+  { cat: "comidas", en: "Chicken", pt: "Frango" },
+  { cat: "comidas", en: "Cheese", pt: "Queijo" },
+  { cat: "comidas", en: "Coffee", pt: "Café" },
+  { cat: "comidas", en: "Egg", pt: "Ovo" },
+  { cat: "comidas", en: "Banana", pt: "Banana" },
+
+  //Dias da semana
+  { cat: "dias e meses", en: "Monday", pt: "Segunda-feira" },
+  { cat: "dias e meses", en: "Tuesday", pt: "Terça-feira" },
+  { cat: "dias e meses", en: "Wednesday", pt: "Quarta-feira" },
+  { cat: "dias e meses", en: "Thursday", pt: "Quinta-feira" },
+  { cat: "dias e meses", en: "Friday", pt: "Sexta-feira" },
+  { cat: "dias e meses", en: "Saturday", pt: "Sábado" },
+  { cat: "dias e meses", en: "Sunday", pt: "Domingo" },
+
+  //Meses
+  { cat: "dias e meses", en: "January", pt: "Janeiro" },
+  { cat: "dias e meses", en: "February", pt: "Fevereiro" },
+  { cat: "dias e meses", en: "March", pt: "Março" },
+  { cat: "dias e meses", en: "April", pt: "Abril" },
+  { cat: "dias e meses", en: "May", pt: "Maio" },
+  { cat: "dias e meses", en: "June", pt: "Junho" },
+  { cat: "dias e meses", en: "July", pt: "Julho" },
+  { cat: "dias e meses", en: "August", pt: "Agosto" },
+  { cat: "dias e meses", en: "September", pt: "Setembro" },
+  { cat: "dias e meses", en: "October", pt: "Outubro" },
+  { cat: "dias e meses", en: "November", pt: "Novembro" },
+  { cat: "dias e meses", en: "December", pt: "Dezembro" },
+];

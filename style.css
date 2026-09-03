@@ -1,0 +1,531 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #EEF0EC;
+  --surface: #FFFFFF;
+  --ink: #22303A;
+  --muted: #5C6B65;
+  --line: #DEDAD1;
+
+  --header-bg: #6F9673;      
+  --accent-teal: #355E63;    
+  --accent-teal-dark: #23454A; 
+  --accent-olive: #4C9A63;
+  --accent-sage: #8FA57C;    
+  --accent-rust: #C1502E;    
+  --accent-gold: #C99A4B;    
+  --accent-tan: #B98554;     
+
+  --font-title: 'Space Grotesk', sans-serif;
+  --font-body: 'Work Sans', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.55;
+}
+
+.wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Cabeçalho */
+header {
+  background: var(--header-bg);
+  color: #fff;
+}
+
+header .bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.brand {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 1.2rem;
+  text-decoration: none;
+  color: #fff;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 16px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  opacity: 0.85;
+}
+nav a:hover { opacity: 1; }
+
+#userChip {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  margin-left: 16px;
+  font-size: 0.85rem;
+  background: rgba(255,255,255,0.12);
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+#userChip button {
+  background: none;
+  border: none;
+  color: var(--accent-gold);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* Título principal */
+.hero {
+  padding: 46px 0 30px;
+}
+
+.hero h1 {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 2.1rem;
+  margin: 0 0 12px;
+  color: var(--accent-teal-dark);
+}
+
+.hero p {
+  max-width: 50ch;
+  color: var(--muted);
+  font-size: 1.02rem;
+}
+
+/* Tela "Carregando..." (index.html, antes do Firebase confirmar o login) */
+.loading-screen {
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* Cartão de login/cadastro */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 28px;
+  max-width: 400px;
+}
+
+.card h2 {
+  font-family: var(--font-title);
+  margin: 0 0 6px;
+  color: var(--accent-teal-dark);
+}
+
+.field {
+  margin-bottom: 14px;
+}
+
+.field label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: var(--ink);
+}
+
+.field input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--accent-teal);
+}
+
+.btn {
+  border: none;
+  border-radius: 6px;
+  padding: 12px 22px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.98rem;
+}
+
+.btn-primary {
+  background: var(--accent-rust);
+  color: #fff;
+  width: 100%;
+}
+.btn-primary:hover { background: #A6421F; }
+
+/* Usada em botões que não devem ocupar a largura toda (telas de jogo) */
+.btn-auto {
+  width: auto;
+}
+
+.form-footer {
+  margin-top: 14px;
+  font-size: 0.85rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-footer button {
+  background: none;
+  border: none;
+  color: var(--accent-teal);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.msg {
+  font-size: 0.85rem;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  display: none;
+}
+.msg.show { display: block; }
+.msg.error { background: #F6E2DA; color: #A6421F; }
+.msg.ok { background: #E4EBDE; color: #4A5E38; }
+
+section {
+  padding: 40px 0;
+}
+
+section h2 {
+  font-family: var(--font-title);
+  font-size: 1.5rem;
+  margin: 0 0 6px;
+  color: var(--accent-teal-dark);
+}
+
+.locked-note {
+  background: var(--surface);
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  padding: 24px;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* Cartão de pontuação (index.html) */
+.score-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.score-card h2 {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+}
+
+.score-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.score-card .value {
+  font-family: var(--font-title);
+  font-size: 1.4rem;
+  color: var(--accent-teal-dark);
+}
+
+/* Tópicos das lições */
+.topic-pill {
+  border: none;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: left;
+  cursor: pointer;
+  color: #fff;
+  font-family: var(--font-body);
+  width: 100%;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.topic-pill .emoji {
+  font-size: 1.4rem;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.topic-pill .label {
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 1rem;
+  display: block;
+}
+
+.topic-pill .explicacao {
+  display: block;
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+.topic-pill.active { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* Cartões de vocabulário */
+.stamp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.stamp {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  border-left-width: 4px;
+}
+
+.stamp .en {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  margin: 0 0 2px;
+  color: var(--accent-teal-dark);
+}
+
+.stamp .pt {
+  color: var(--muted);
+  margin: 0;
+}
+
+/* Página do jogo */
+.game-shell {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 30px 24px 50px;
+}
+
+.pass {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.pass-top {
+  background: var(--accent-teal);
+  color: #fff;
+  padding: 16px 22px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pass-top .label {
+  font-size: 0.75rem;
+  opacity: 0.75;
+}
+
+.pass-body {
+  padding: 26px;
+}
+
+.bar-track {
+  height: 8px;
+  background: var(--line);
+  border-radius: 999px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--accent-sage);
+  width: 0%;
+}
+
+.question {
+  font-family: var(--font-title);
+  font-size: 1.3rem;
+  margin: 0 0 20px;
+  color: var(--accent-teal-dark);
+}
+
+.question-sub {
+  color: var(--muted);
+  margin: 0 0 6px;
+  font-weight: 700;
+}
+
+.options {
+  display: grid;
+  gap: 10px;
+}
+
+.option {
+  text-align: left;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #FCFCFB;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.option:hover { border-color: var(--accent-teal); }
+
+.option.correct {
+  border-color: #4A5E38;
+  background: #E4EBDE;
+  color: #4A5E38;
+}
+
+.option.wrong {
+  border-color: #A6421F;
+  background: #F6E2DA;
+  color: #A6421F;
+}
+
+.option.selected {
+  border-color: var(--accent-teal);
+  background: #E9EDE8;
+}
+
+.result {
+  text-align: center;
+}
+
+.result .score {
+  font-family: var(--font-title);
+  font-size: 2.4rem;
+  color: var(--accent-rust);
+  margin: 6px 0;
+}
+
+.result-msg {
+  color: var(--muted);
+}
+
+.leaderboard {
+  margin-top: 34px;
+}
+
+.leaderboard h3 {
+  font-family: var(--font-title);
+  color: var(--accent-teal-dark);
+}
+
+.lb-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  font-weight: 600;
+}
+
+.lb-row:first-child { border-top: 1px solid var(--line); }
+
+/* Revisão de respostas, no final do quiz e do jogo de frases */
+.revisao-item {
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  border-left: 4px solid var(--line);
+  text-align: left;
+}
+
+.revisao-item.acertou { border-left-color: #4A5E38; }
+.revisao-item.errou { border-left-color: #A6421F; }
+
+.revisao-item .pergunta {
+  margin: 0 0 4px;
+  font-weight: 700;
+}
+
+.revisao-item .resposta-dada {
+  margin: 0;
+}
+.revisao-item.acertou .resposta-dada { color: #4A5E38; }
+.revisao-item.errou .resposta-dada { color: #A6421F; }
+
+.revisao-item .resposta-certa {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* Jogo "monte a frase" */
+.sentence-target {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 52px;
+  padding: 12px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.sentence-bank {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.word-chip {
+  border: none;
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  background: var(--accent-teal);
+  color: #fff;
+}
+
+.word-chip:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.word-chip.placed {
+  background: var(--accent-tan);
+}
+
+.btn-green {
+  background: var(--accent-olive);
+  color: #fff;
+}
+.btn-green:hover { background: #3D7D50; }
+
+/* Tela inicial de cada jogo */
+.start-screen {
+  text-align: center;
+  padding: 20px 0 10px;
+}
+
+.start-screen p {
+  color: var(--muted);
+  margin: 0 0 20px;
+}

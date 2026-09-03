@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aprendendo Devagar</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <a href="index.html" class="brand">Aprendendo Devagar</a>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="licoes.html">Lições</a>
+      <a href="jogo.html">Quiz</a>
+      <a href="frase.html">Frase</a>
+      <span id="userChip">
+        <span id="userName"></span>
+        <button id="btnLogout">Sair</button>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div id="loadingScreen" class="wrap" style="padding:60px 24px; text-align:center; color:#6C6394;">Carregando...</div>
+
+  <!-- Tela de boas-vindas (só aparece sem login) -->
+  <section class="hero wrap" id="welcomeArea" style="display:none">
+    <h1>Uma forma simples de aprender inglês, sem precisar se sentir pressionado!</h1>
+    <p>Aprenda no seu tempo: veja as palavras, monte frases e teste o que aprendeu quando quiser.</p>
+
+    <div id="authArea">
+      <!--Login-->
+      <div class="card" id="loginCard">
+        <h2>Entrar</h2>
+        <div class="msg" id="loginMsg"></div>
+        <form id="loginForm">
+          <div class="field">
+            <label for="loginEmail">E-mail</label>
+            <input type="email" id="loginEmail" required>
+          </div>
+          <div class="field">
+            <label for="loginPass">Senha</label>
+            <input type="password" id="loginPass" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Entrar</button>
+        </form>
+        <div class="form-footer">
+          <button id="showForgot">Esqueci minha senha</button>
+          <button id="showRegister">Criar uma conta</button>
+        </div>
+      </div>
+
+      <!--Cadastro-->
+      <div class="card" id="registerCard" style="display:none">
+        <h2>Criar conta</h2>
+        <div class="msg" id="registerMsg"></div>
+        <form id="registerForm">
+          <div class="field">
+            <label for="regName">Nome</label>
+            <input type="text" id="regName" required>
+          </div>
+          <div class="field">
+            <label for="regEmail">E-mail</label>
+            <input type="email" id="regEmail" required>
+          </div>
+          <div class="field">
+            <label for="regPass">Senha (mín. 6 caracteres)</label>
+            <input type="password" id="regPass" required minlength="6">
+          </div>
+          <button type="submit" class="btn btn-primary">Criar conta</button>
+        </form>
+        <div class="form-footer">
+          <button id="backToLoginFromRegister">Já tenho conta</button>
+        </div>
+      </div>
+
+      <!--Esqueci a senha-->
+      <div class="card" id="forgotCard" style="display:none">
+        <h2>Recuperar senha</h2>
+        <div class="msg" id="forgotMsg"></div>
+        <form id="forgotForm">
+          <div class="field">
+            <label for="forgotEmail">E-mail</label>
+            <input type="email" id="forgotEmail" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Enviar link</button>
+        </form>
+        <div class="form-footer">
+          <button id="backToLoginFromForgot">Voltar para o login</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Painel do aluno (só aparece com login) -->
+  <div id="dashboardArea" style="display:none">
+    <section class="wrap" style="padding-top:36px;">
+
+      <!-- Ponto do quiz -->
+      <div class="card" style="max-width:none; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; margin-bottom:14px;">
+        <div>
+          <h2 style="margin:0 0 4px; font-size:1.2rem;">Seus pontos no Quiz</h2>
+          <p style="margin:0; color:#6C6394; font-size:0.9rem;">Sua melhor pontuação até agora</p>
+        </div>
+        <div style="font-family:var(--font-title); font-size:1.4rem; color:var(--purple-dark);" id="pointsQuiz">0/10</div>
+      </div>
+
+      <!-- Ponto do jogo de frases -->
+      <div class="card" style="max-width:none; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;">
+        <div>
+          <h2 style="margin:0 0 4px; font-size:1.2rem;">Seus pontos em Monte a frase</h2>
+          <p style="margin:0; color:#6C6394; font-size:0.9rem;">Sua melhor pontuação até agora</p>
+        </div>
+        <div style="font-family:var(--font-title); font-size:1.4rem; color:var(--purple-dark);" id="pointsFrase">0/10</div>
+      </div>
+
+    </section>
+  </div>
+</main>
+
+<script type="module">
+import {
+  auth, onAuthStateChanged, signOut,
+  createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  sendPasswordResetEmail, updateProfile,
+  doc, getDoc, db
+} from "./firebase.js";
+
+const loginCard = document.getElementById('loginCard');
+const registerCard = document.getElementById('registerCard');
+const forgotCard = document.getElementById('forgotCard');
+
+function showCard(card) {
+  [loginCard, registerCard, forgotCard].forEach(c => c.style.display = 'none');
+  card.style.display = 'block';
+}
+
+document.getElementById('showRegister').onclick = () => showCard(registerCard);
+document.getElementById('showForgot').onclick = () => showCard(forgotCard);
+document.getElementById('backToLoginFromRegister').onclick = () => showCard(loginCard);
+document.getElementById('backToLoginFromForgot').onclick = () => showCard(loginCard);
+
+function setMsg(id, text, ok) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'msg show ' + (ok ? 'ok' : 'error');
+}
+
+// Troca os códigos de erro do Firebase por mensagens em português
+function friendlyError(err) {
+  const code = err.code || '';
+  if (code.includes('email-already-in-use')) return 'Esse e-mail já está cadastrado.';
+  if (code.includes('invalid-email')) return 'E-mail inválido.';
+  if (code.includes('weak-password')) return 'Senha muito curta (mínimo 6 caracteres).';
+  if (code.includes('invalid-credential') || code.includes('wrong-password') || code.includes('user-not-found')) return 'E-mail ou senha incorretos.';
+  return 'Algo deu errado. Tente novamente.';
+}
+
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const pass = document.getElementById('loginPass').value;
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch (err) {
+    setMsg('loginMsg', friendlyError(err), false);
+  }
+});
+
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value;
+  const pass = document.getElementById('regPass').value;
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await updateProfile(cred.user, { displayName: name });
+  } catch (err) {
+    setMsg('registerMsg', friendlyError(err), false);
+  }
+});
+
+document.getElementById('forgotForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('forgotEmail').value;
+  try {
+    await sendPasswordResetEmail(auth, email);
+    setMsg('forgotMsg', 'Link enviado! Confira seu e-mail.', true);
+  } catch (err) {
+    setMsg('forgotMsg', friendlyError(err), false);
+  }
+});
+
+document.getElementById('btnLogout').onclick = () => signOut(auth);
+
+onAuthStateChanged(auth, async (user) => {
+  const welcomeArea = document.getElementById('welcomeArea');
+  const dashboardArea = document.getElementById('dashboardArea');
+  const userChip = document.getElementById('userChip');
+
+  document.getElementById('loadingScreen').style.display = 'none';
+
+  if (user) {
+    welcomeArea.style.display = 'none';
+    dashboardArea.style.display = 'block';
+    userChip.style.display = 'flex';
+    document.getElementById('userName').textContent = user.displayName || user.email;
+
+    carregarPontos(user.uid, 'scores', 'pointsQuiz');
+    carregarPontos(user.uid, 'scoresFrase', 'pointsFrase');
+  } else {
+    welcomeArea.style.display = 'block';
+    dashboardArea.style.display = 'none';
+    userChip.style.display = 'none';
+    showCard(loginCard);
+  }
+});
+
+// Busca a melhor pontuação salva no Firestore e mostra na tela
+async function carregarPontos(uid, colecao, elementoId) {
+  const display = document.getElementById(elementoId);
+  try {
+    const ref = doc(db, colecao, uid);
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      const data = snap.data();
+      display.textContent = `${data.score}/${data.total}`;
+    } else {
+      display.textContent = 'Ainda não jogou';
+    }
+  } catch (e) {
+    display.textContent = '—';
+  }
+}
+</script>
+
+</body>
+</html>

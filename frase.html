@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monte a frase — Aprendendo Devagar</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <a href="index.html" class="brand">Aprendendo Devagar</a>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="licoes.html">Lições</a>
+      <a href="jogo.html">Quiz</a>
+      <a href="frase.html">Frase</a>
+      <span id="userChip">
+        <span id="userName"></span>
+        <button id="btnLogout">Sair</button>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<main class="game-shell">
+
+  <div id="lockedNote" class="locked-note" style="display:none">
+    Você precisa fazer login para jogar. <a href="index.html">Voltar e entrar</a>.
+  </div>
+
+  <div id="gameArea" style="display:none">
+    <div class="pass">
+      <div class="pass-top">
+        <div>
+          <div class="label">jogador</div>
+          <div id="playerName">—</div>
+        </div>
+        <div>
+          <div class="label">frase</div>
+          <div id="sentenceCount">1 / 10</div>
+        </div>
+      </div>
+      <div class="pass-body">
+
+        <!-- Tela inicial -->
+        <div id="startStage" class="start-screen">
+          <h2 class="question">Vamos montar frases?</h2>
+          <p>Clique nas palavras na ordem certa para formar 10 frases em inglês.</p>
+          <button class="btn btn-green btn-auto" id="btnStart">Começar!</button>
+        </div>
+
+        <div id="gameWrapper" style="display:none">
+          <div class="bar-track"><div class="bar-fill" id="progressFill"></div></div>
+
+          <div id="stage">
+            <p class="question-sub">Clique nas palavras na ordem certa para montar a frase:</p>
+            <h2 class="question" id="sentencePt">—</h2>
+
+            <div class="sentence-target" id="sentenceTarget"></div>
+            <div class="sentence-bank" id="sentenceBank"></div>
+
+            <!-- Só aparece quando todas as palavras já foram usadas -->
+            <button class="btn btn-primary btn-auto" id="btnEnviar" style="margin-top:16px; display:none;">Enviar</button>
+          </div>
+
+          <!-- Tela final: pontuação + revisão de todas as frases -->
+          <div id="resultStage" class="result" style="display:none">
+            <p style="font-weight:700">Você concluiu o jogo!</p>
+            <p class="score" id="finalScore">0/10</p>
+            <p class="result-msg" id="resultMsg"></p>
+            <button class="btn btn-primary btn-auto" id="btnRestart">Jogar de novo</button>
+
+            <div id="revisao" style="margin-top:24px;"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="leaderboard">
+      <h3>Placar — melhores pontuações</h3>
+      <div id="leaderboardArea"><p>Carregando...</p></div>
+    </div>
+  </div>
+
+</main>
+
+<script type="module">
+import { auth, onAuthStateChanged, signOut, saveScoreIfBest, getLeaderboard } from "./firebase.js";
+import { FRASES } from "./frases.js";
+
+document.getElementById('btnLogout').onclick = () => signOut(auth);
+
+let currentUser = null;
+
+onAuthStateChanged(auth, (user) => {
+  const userChip = document.getElementById('userChip');
+  if (user) {
+    currentUser = user;
+    userChip.style.display = 'flex';
+    document.getElementById('userName').textContent = user.displayName || user.email;
+    document.getElementById('lockedNote').style.display = 'none';
+    document.getElementById('gameArea').style.display = 'block';
+    document.getElementById('playerName').textContent = user.displayName || user.email;
+    resetToStart();
+    loadLeaderboard();
+  } else {
+    currentUser = null;
+    userChip.style.display = 'none';
+    document.getElementById('lockedNote').style.display = 'block';
+    document.getElementById('gameArea').style.display = 'none';
+  }
+});
+
+const TOTAL = 10;
+let ordem = [];
+let currentIndex = 0;
+let acertos = 0;
+let montada = [];
+let restantes = [];
+let historico = []; // guarda cada frase respondida, pra mostrar no final
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function resetToStart() {
+  document.getElementById('startStage').style.display = 'block';
+  document.getElementById('gameWrapper').style.display = 'none';
+}
+
+document.getElementById('btnStart').onclick = startGame;
+document.getElementById('btnRestart').onclick = startGame;
+
+function startGame() {
+  ordem = shuffle(FRASES).slice(0, TOTAL);
+  currentIndex = 0;
+  acertos = 0;
+  historico = [];
+  document.getElementById('startStage').style.display = 'none';
+  document.getElementById('gameWrapper').style.display = 'block';
+  document.getElementById('stage').style.display = 'block';
+  document.getElementById('resultStage').style.display = 'none';
+  renderFrase();
+}
+
+function renderFrase() {
+  const frase = ordem[currentIndex];
+  document.getElementById('sentenceCount').textContent = `${currentIndex + 1} / ${TOTAL}`;
+  document.getElementById('progressFill').style.width = `${(currentIndex / TOTAL) * 100}%`;
+  document.getElementById('sentencePt').textContent = frase.pt;
+
+  montada = [];
+  restantes = shuffle(frase.en);
+
+  document.getElementById('sentenceTarget').innerHTML = '';
+  document.getElementById('btnEnviar').style.display = 'none';
+  renderBank();
+}
+
+function renderBank() {
+  const bank = document.getElementById('sentenceBank');
+  bank.innerHTML = '';
+  restantes.forEach((palavra, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'word-chip';
+    btn.textContent = palavra;
+    btn.onclick = () => escolherPalavra(i);
+    bank.appendChild(btn);
+  });
+}
+
+function escolherPalavra(indice) {
+  const palavra = restantes[indice];
+  montada.push(palavra);
+  restantes.splice(indice, 1);
+
+  const target = document.getElementById('sentenceTarget');
+  const chip = document.createElement('span');
+  chip.className = 'word-chip placed';
+  chip.textContent = palavra;
+  target.appendChild(chip);
+
+  renderBank();
+
+  // só mostra o botão Enviar quando a frase estiver completa
+  if (restantes.length === 0) {
+    document.getElementById('btnEnviar').style.display = 'inline-flex';
+  }
+}
+
+document.getElementById('btnEnviar').onclick = () => {
+  const frase = ordem[currentIndex];
+  const correto = montada.join(' ') === frase.en.join(' ');
+  if (correto) acertos++;
+
+  historico.push({
+    pt: frase.pt,
+    respostaCerta: frase.en.join(' '),
+    respostaDada: montada.join(' '),
+    acertou: correto
+  });
+
+  currentIndex++;
+  if (currentIndex < TOTAL) {
+    renderFrase();
+  } else {
+    finishGame();
+  }
+};
+
+async function finishGame() {
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('stage').style.display = 'none';
+  document.getElementById('resultStage').style.display = 'block';
+  document.getElementById('finalScore').textContent = `${acertos}/${TOTAL}`;
+
+  renderRevisao();
+
+  if (currentUser) {
+    try {
+      const name = currentUser.displayName || currentUser.email;
+      await saveScoreIfBest(currentUser.uid, name, acertos, TOTAL, "scoresFrase");
+      document.getElementById('resultMsg').textContent = 'Sua pontuação foi salva.';
+      loadLeaderboard();
+    } catch (e) {
+      document.getElementById('resultMsg').textContent = 'Não foi possível salvar a pontuação agora.';
+    }
+  }
+}
+
+// Mostra a lista de todas as frases respondidas, certas e erradas
+function renderRevisao() {
+  const area = document.getElementById('revisao');
+  area.innerHTML = '<h3>Revisão das respostas</h3>';
+
+  historico.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'revisao-item ' + (item.acertou ? 'acertou' : 'errou');
+    div.innerHTML = `
+      <p class="pergunta">${item.pt}</p>
+      <p class="resposta-dada">Sua resposta: ${item.respostaDada}</p>
+      ${item.acertou ? '' : `<p class="resposta-certa">Resposta certa: ${item.respostaCerta}</p>`}
+    `;
+    area.appendChild(div);
+  });
+}
+
+async function loadLeaderboard() {
+  const area = document.getElementById('leaderboardArea');
+  try {
+    const top = await getLeaderboard("scoresFrase");
+    if (top.length === 0) {
+      area.innerHTML = '<p>Ninguém pontuou ainda — seja o primeiro!</p>';
+      return;
+    }
+    area.innerHTML = top.map((row, i) => `
+      <div class="lb-row">
+        <span>${i + 1}º ${row.name}</span>
+        <span>${row.score}/${row.total}</span>
+      </div>
+    `).join('');
+  } catch (e) {
+    area.innerHTML = '<p>Não foi possível carregar o placar agora.</p>';
+  }
+}
+</script>
+
+</body>
+</html>
