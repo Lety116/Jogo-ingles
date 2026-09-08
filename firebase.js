@@ -14,6 +14,7 @@ import {
   doc,
   setDoc,
   getDoc,
+  addDoc,
   collection,
   query,
   orderBy,
