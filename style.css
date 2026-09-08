@@ -297,6 +297,7 @@ section h2 {
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 14px;
   margin-top: 12px;
+  margin-bottom: 14px;
 }
 
 .stamp {

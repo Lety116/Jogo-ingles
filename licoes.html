@@ -78,6 +78,8 @@ function capitalizar(texto) {
 // Guarda qual tópico está aberto no momento (null = nenhum)
 let topicoAberto = null;
 
+// Se um estiver aberto, mostra as palavras dele
+function renderTopicos() {
   const topicList = document.getElementById('topicList');
   topicList.innerHTML = '';
 
@@ -121,7 +123,7 @@ let topicoAberto = null;
 
     topicList.appendChild(card);
   });
-
+}
 </script>
 
 </body>
