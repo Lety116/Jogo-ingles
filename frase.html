@@ -104,7 +104,10 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById('lockedNote').style.display = 'none';
     document.getElementById('gameArea').style.display = 'block';
     document.getElementById('playerName').textContent = user.displayName || user.email;
-    registrarAcesso(user.uid, user.displayName || user.email, user.email);
+    if (!sessionStorage.getItem('acessoRegistrado')) {
+      registrarAcesso(user.uid, user.displayName || user.email, user.email);
+      sessionStorage.setItem('acessoRegistrado', '1');
+    }
     resetToStart();
     loadLeaderboard();
   } else {

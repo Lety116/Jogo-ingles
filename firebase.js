@@ -78,10 +78,11 @@ export async function getLeaderboard(colecao = "scores") {
 
 // Registra um acesso ao site: nome, e-mail e data/horário.
 export async function registrarAcesso(uid, name, email) {
+  const dataFormatada = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
   await addDoc(collection(db, "acessos"), {
     uid,
     name,
     email,
-    dataHora: new Date().toISOString()
+    dataHora: dataFormatada
   });
 }

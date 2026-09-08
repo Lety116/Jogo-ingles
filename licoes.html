@@ -51,7 +51,10 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById('userName').textContent = user.displayName || user.email;
     document.getElementById('lockedNote').style.display = 'none';
     document.getElementById('licoesArea').style.display = 'block';
-    registrarAcesso(user.uid, user.displayName || user.email, user.email);
+    if (!sessionStorage.getItem('acessoRegistrado')) {
+      registrarAcesso(user.uid, user.displayName || user.email, user.email);
+      sessionStorage.setItem('acessoRegistrado', '1');
+    }
     renderTopicos();
   } else {
     userChip.style.display = 'none';
