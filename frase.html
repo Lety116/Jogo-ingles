@@ -88,7 +88,7 @@
 </main>
 
 <script type="module">
-import { auth, onAuthStateChanged, signOut, saveScoreIfBest, getLeaderboard } from "./firebase.js";
+import { auth, onAuthStateChanged, signOut, saveScoreIfBest, getLeaderboard, registrarAcesso } from "./firebase.js";
 import { FRASES } from "./frases.js";
 
 document.getElementById('btnLogout').onclick = () => signOut(auth);
@@ -104,6 +104,7 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById('lockedNote').style.display = 'none';
     document.getElementById('gameArea').style.display = 'block';
     document.getElementById('playerName').textContent = user.displayName || user.email;
+    registrarAcesso(user.uid, user.displayName || user.email, user.email);
     resetToStart();
     loadLeaderboard();
   } else {

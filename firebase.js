@@ -46,6 +46,7 @@ export {
   doc,
   setDoc,
   getDoc,
+  addDoc,
   collection,
   query,
   orderBy,
@@ -72,4 +73,14 @@ export async function getLeaderboard(colecao = "scores") {
   const q = query(collection(db, colecao), orderBy("score", "desc"), limit(5));
   const snap = await getDocs(q);
   return snap.docs.map(d => d.data());
+}
+
+// Registra um acesso ao site: nome, e-mail e data/horário.
+export async function registrarAcesso(uid, name, email) {
+  await addDoc(collection(db, "acessos"), {
+    uid,
+    name,
+    email,
+    dataHora: new Date().toISOString()
+  });
 }

@@ -127,7 +127,7 @@ import {
   auth, onAuthStateChanged, signOut,
   createUserWithEmailAndPassword, signInWithEmailAndPassword,
   sendPasswordResetEmail, updateProfile,
-  doc, getDoc, db
+  doc, getDoc, db, registrarAcesso
 } from "./firebase.js";
 
 const loginCard = document.getElementById('loginCard');
@@ -210,7 +210,10 @@ onAuthStateChanged(auth, async (user) => {
     userChip.style.display = 'flex';
     document.getElementById('userName').textContent = user.displayName || user.email;
 
+    registrarAcesso(user.uid, user.displayName || user.email, user.email);
+
     carregarPontos(user.uid, 'scores', 'pointsQuiz');
+    
     carregarPontos(user.uid, 'scoresFrase', 'pointsFrase');
   } else {
     welcomeArea.style.display = 'block';

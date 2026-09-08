@@ -38,7 +38,7 @@
 </main>
 
 <script type="module">
-import { auth, onAuthStateChanged, signOut } from "./firebase.js";
+import { auth, onAuthStateChanged, signOut, registrarAcesso } from "./firebase.js";
 import { VOCABULARIO } from "./vocabulario.js";
 
 document.getElementById('btnLogout').onclick = () => signOut(auth);
@@ -51,6 +51,7 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById('userName').textContent = user.displayName || user.email;
     document.getElementById('lockedNote').style.display = 'none';
     document.getElementById('licoesArea').style.display = 'block';
+    registrarAcesso(user.uid, user.displayName || user.email, user.email);
     renderTopicos();
   } else {
     userChip.style.display = 'none';
